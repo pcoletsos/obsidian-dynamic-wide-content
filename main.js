@@ -52,7 +52,7 @@ class DynamicWideContentSettingTab extends PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: "Dynamic Wide Content" });
+    new Setting(containerEl).setName("Dynamic wide content").setHeading();
     containerEl.createEl("p", {
       text: "Use wide tables, diagrams, images, and code blocks without widening normal prose."
     });

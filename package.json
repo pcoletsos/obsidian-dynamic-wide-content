@@ -1,7 +1,7 @@
 {
   "name": "obsidian-dynamic-wide-content",
   "version": "1.0.0",
-  "description": "Wide tables, diagrams, images, and code blocks without widening your Obsidian prose.",
+  "description": "Wide tables, diagrams, images, and code blocks without widening your prose.",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
