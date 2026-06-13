@@ -75,7 +75,8 @@ For release builds:
 npm run build
 ```
 
-Community plugin releases should include:
+Community plugin releases are built from Git tags by the release workflow. Each
+release includes:
 
 - `manifest.json`
 - `main.js`

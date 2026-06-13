@@ -12,6 +12,15 @@ interface DynamicWideContentSettings {
   livePreview: boolean;
 }
 
+type ToggleSetting =
+  | "widenTables"
+  | "widenCodeBlocks"
+  | "widenDiagrams"
+  | "widenImages"
+  | "noWrapTableCells"
+  | "readingView"
+  | "livePreview";
+
 const DEFAULT_SETTINGS: DynamicWideContentSettings = {
   maxWidth: 1600,
   viewportMargin: 64,
@@ -24,40 +33,68 @@ const DEFAULT_SETTINGS: DynamicWideContentSettings = {
   livePreview: true
 };
 
+const BODY_CLASSES = [
+  "dynamic-wide-content",
+  "dynamic-wide-content-reading",
+  "dynamic-wide-content-live-preview",
+  "dynamic-wide-content-tables",
+  "dynamic-wide-content-code",
+  "dynamic-wide-content-diagrams",
+  "dynamic-wide-content-images",
+  "dynamic-wide-content-nowrap-tables"
+];
+
 export default class DynamicWideContentPlugin extends Plugin {
-  settings: DynamicWideContentSettings;
-  private styleEl: HTMLStyleElement | null = null;
+  settings: DynamicWideContentSettings = { ...DEFAULT_SETTINGS };
 
   async onload() {
     await this.loadSettings();
+    this.applySettings();
 
-    this.styleEl = document.createElement("style");
-    this.styleEl.id = "dynamic-wide-content-styles";
-    document.head.appendChild(this.styleEl);
-    this.register(() => this.styleEl?.remove());
-
-    this.updateStyles();
+    this.registerEvent(
+      this.app.workspace.on("layout-change", () => this.applySettings())
+    );
+    this.register(() => this.clearSettings());
 
     this.addSettingTab(new DynamicWideContentSettingTab(this.app, this));
     this.addCommand({
-      id: "refresh-dynamic-wide-content",
+      id: "refresh-styles",
       name: "Refresh wide content styles",
-      callback: () => this.updateStyles()
+      callback: () => this.applySettings()
     });
   }
 
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const saved: unknown = await this.loadData();
+    this.settings = normalizeSettings(saved);
   }
 
   async saveSettings() {
     await this.saveData(this.settings);
-    this.updateStyles();
+    this.applySettings();
   }
 
-  updateStyles() {
-    if (!this.styleEl) return;
-    this.styleEl.textContent = buildCss(this.settings);
+  applySettings() {
+    const { body } = activeDocument;
+
+    body.style.setProperty("--dynamic-wide-content-max-width", `${this.settings.maxWidth}px`);
+    body.style.setProperty("--dynamic-wide-content-viewport-margin", `${this.settings.viewportMargin}px`);
+
+    body.classList.add("dynamic-wide-content");
+    body.classList.toggle("dynamic-wide-content-reading", this.settings.readingView);
+    body.classList.toggle("dynamic-wide-content-live-preview", this.settings.livePreview);
+    body.classList.toggle("dynamic-wide-content-tables", this.settings.widenTables);
+    body.classList.toggle("dynamic-wide-content-code", this.settings.widenCodeBlocks);
+    body.classList.toggle("dynamic-wide-content-diagrams", this.settings.widenDiagrams);
+    body.classList.toggle("dynamic-wide-content-images", this.settings.widenImages);
+    body.classList.toggle("dynamic-wide-content-nowrap-tables", this.settings.noWrapTableCells);
+  }
+
+  clearSettings() {
+    const { body } = activeDocument;
+    body.classList.remove(...BODY_CLASSES);
+    body.style.removeProperty("--dynamic-wide-content-max-width");
+    body.style.removeProperty("--dynamic-wide-content-viewport-margin");
   }
 }
 
@@ -72,18 +109,18 @@ class DynamicWideContentSettingTab extends PluginSettingTab {
   display(): void {
     const { containerEl } = this;
     containerEl.empty();
-    new Setting(containerEl).setName("Dynamic wide content").setHeading();
+
+    new Setting(containerEl).setName("Display").setHeading();
     containerEl.createEl("p", {
       text: "Use wide tables, diagrams, images, and code blocks without widening normal prose."
     });
 
     new Setting(containerEl)
       .setName("Maximum wide content width")
-      .setDesc("Controls how far wide blocks may expand while prose keeps Obsidian's readable width.")
+      .setDesc("Controls how far wide blocks may expand while prose keeps readable width.")
       .addSlider((slider) => slider
         .setLimits(900, 2400, 50)
         .setValue(this.plugin.settings.maxWidth)
-        .setDynamicTooltip()
         .onChange(async (value) => {
           this.plugin.settings.maxWidth = value;
           await this.plugin.saveSettings();
@@ -91,11 +128,10 @@ class DynamicWideContentSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Viewport side margin")
-      .setDesc("Keeps widened blocks away from the edge of the Obsidian pane.")
+      .setDesc("Keeps widened blocks away from the edge of the pane.")
       .addSlider((slider) => slider
         .setLimits(0, 160, 8)
         .setValue(this.plugin.settings.viewportMargin)
-        .setDynamicTooltip()
         .onChange(async (value) => {
           this.plugin.settings.viewportMargin = value;
           await this.plugin.saveSettings();
@@ -116,14 +152,7 @@ function addToggle(
   name: string,
   desc: string,
   plugin: DynamicWideContentPlugin,
-  key: keyof Pick<DynamicWideContentSettings,
-    "widenTables" |
-    "widenCodeBlocks" |
-    "widenDiagrams" |
-    "widenImages" |
-    "noWrapTableCells" |
-    "readingView" |
-    "livePreview">
+  key: ToggleSetting
 ) {
   new Setting(containerEl)
     .setName(name)
@@ -136,194 +165,30 @@ function addToggle(
       }));
 }
 
-function buildCss(settings: DynamicWideContentSettings): string {
-  const readingBlocks: string[] = [];
-  const innerBlocks: string[] = [];
-  const livePreviewBlocks: string[] = [];
-  const mediaContent: string[] = [];
+function normalizeSettings(saved: unknown): DynamicWideContentSettings {
+  const value = isRecord(saved) ? saved : {};
 
-  if (settings.widenTables) {
-    readingBlocks.push(
-      ".markdown-rendered .el-table",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> table)",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> .table-wrapper)"
-    );
-    innerBlocks.push(".markdown-rendered .table-wrapper");
-    livePreviewBlocks.push(
-      ".markdown-source-view.mod-cm6 .cm-embed-block:has(table)",
-      ".markdown-source-view.mod-cm6 .cm-embed-block:has(.table-wrapper)"
-    );
-  }
-
-  if (settings.widenCodeBlocks) {
-    readingBlocks.push(
-      ".markdown-rendered .el-pre",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> pre)"
-    );
-    innerBlocks.push(".markdown-rendered pre");
-    livePreviewBlocks.push(".markdown-source-view.mod-cm6 .cm-embed-block:has(pre)");
-  }
-
-  if (settings.widenDiagrams) {
-    readingBlocks.push(
-      ".markdown-rendered .el-lang-mermaid",
-      ".markdown-rendered .el-lang-plantuml",
-      ".markdown-rendered .el-lang-plantuml-png",
-      ".markdown-rendered .el-lang-plantuml-svg",
-      ".markdown-rendered .el-lang-puml",
-      ".markdown-rendered .el-lang-puml-png",
-      ".markdown-rendered .el-lang-puml-svg",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> .mermaid)",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> .block-language-mermaid)",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> .block-language-plantuml)",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> .block-language-plantuml-png)",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> .block-language-plantuml-svg)",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> .block-language-puml)",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> .block-language-puml-png)",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> .block-language-puml-svg)"
-    );
-    innerBlocks.push(
-      ".markdown-rendered .mermaid",
-      ".markdown-rendered .block-language-mermaid",
-      ".markdown-rendered .block-language-plantuml",
-      ".markdown-rendered .block-language-plantuml-png",
-      ".markdown-rendered .block-language-plantuml-svg",
-      ".markdown-rendered .block-language-puml",
-      ".markdown-rendered .block-language-puml-png",
-      ".markdown-rendered .block-language-puml-svg",
-      ".markdown-rendered .plantuml-preview-view"
-    );
-    livePreviewBlocks.push(
-      ".markdown-source-view.mod-cm6 .cm-embed-block:has(.mermaid)",
-      ".markdown-source-view.mod-cm6 .cm-embed-block:has(.block-language-mermaid)",
-      ".markdown-source-view.mod-cm6 .cm-embed-block:has(.block-language-plantuml)",
-      ".markdown-source-view.mod-cm6 .cm-embed-block:has(.block-language-puml)"
-    );
-    mediaContent.push(
-      ".markdown-rendered .mermaid svg",
-      ".markdown-rendered .block-language-mermaid svg",
-      ".markdown-rendered .block-language-plantuml img",
-      ".markdown-rendered .block-language-plantuml svg",
-      ".markdown-rendered .block-language-plantuml-png img",
-      ".markdown-rendered .block-language-plantuml-svg svg",
-      ".markdown-rendered .block-language-puml img",
-      ".markdown-rendered .block-language-puml svg",
-      ".markdown-rendered .block-language-puml-png img",
-      ".markdown-rendered .block-language-puml-svg svg",
-      ".markdown-rendered .plantuml-preview-view img",
-      ".markdown-rendered .plantuml-preview-view svg"
-    );
-  }
-
-  if (settings.widenImages) {
-    readingBlocks.push(
-      ".markdown-rendered .el-embed-image",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> .internal-embed.image-embed)",
-      ".markdown-rendered .markdown-preview-sizer > div:has(> .image-embed)",
-      ".markdown-rendered .markdown-preview-sizer > div:has(img)"
-    );
-    innerBlocks.push(
-      ".markdown-rendered .internal-embed.image-embed",
-      ".markdown-rendered .image-embed"
-    );
-    livePreviewBlocks.push(
-      ".markdown-source-view.mod-cm6 .cm-embed-block:has(.internal-embed.image-embed)",
-      ".markdown-source-view.mod-cm6 .cm-embed-block:has(.image-embed)",
-      ".markdown-source-view.mod-cm6 .cm-embed-block:has(img)"
-    );
-    mediaContent.push(
-      ".markdown-rendered .internal-embed.image-embed img",
-      ".markdown-rendered .image-embed img"
-    );
-  }
-
-  const css: string[] = [
-    `body {
-  --dynamic-wide-content-max: min(${settings.maxWidth}px, calc(100vw - ${settings.viewportMargin}px));
-}`
-  ];
-
-  if (settings.readingView) {
-    css.push(`
-.markdown-preview-view.is-readable-line-width .markdown-preview-sizer,
-.markdown-reading-view.is-readable-line-width .markdown-preview-sizer,
-.markdown-preview-view .markdown-preview-section,
-.markdown-reading-view .markdown-preview-section {
-  overflow: visible !important;
-}`);
-
-    if (readingBlocks.length > 0) {
-      css.push(`
-${readingBlocks.join(",\n")} {
-  position: relative !important;
-  left: 50% !important;
-  width: max-content !important;
-  max-width: var(--dynamic-wide-content-max) !important;
-  margin-top: 0.75em !important;
-  margin-bottom: 0.75em !important;
-  overflow-x: auto !important;
-  transform: translateX(-50%) !important;
-}`);
-    }
-
-    if (innerBlocks.length > 0) {
-      css.push(`
-${innerBlocks.join(",\n")} {
-  max-width: 100% !important;
-  overflow-x: auto !important;
-}`);
-    }
-  }
-
-  if (settings.livePreview && livePreviewBlocks.length > 0) {
-    css.push(`
-.markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer {
-  overflow: visible !important;
+  return {
+    maxWidth: numberSetting(value.maxWidth, DEFAULT_SETTINGS.maxWidth),
+    viewportMargin: numberSetting(value.viewportMargin, DEFAULT_SETTINGS.viewportMargin),
+    widenTables: booleanSetting(value.widenTables, DEFAULT_SETTINGS.widenTables),
+    widenCodeBlocks: booleanSetting(value.widenCodeBlocks, DEFAULT_SETTINGS.widenCodeBlocks),
+    widenDiagrams: booleanSetting(value.widenDiagrams, DEFAULT_SETTINGS.widenDiagrams),
+    widenImages: booleanSetting(value.widenImages, DEFAULT_SETTINGS.widenImages),
+    noWrapTableCells: booleanSetting(value.noWrapTableCells, DEFAULT_SETTINGS.noWrapTableCells),
+    readingView: booleanSetting(value.readingView, DEFAULT_SETTINGS.readingView),
+    livePreview: booleanSetting(value.livePreview, DEFAULT_SETTINGS.livePreview)
+  };
 }
 
-${livePreviewBlocks.join(",\n")} {
-  position: relative !important;
-  left: 50% !important;
-  width: max-content !important;
-  max-width: var(--dynamic-wide-content-max) !important;
-  overflow-x: auto !important;
-  transform: translateX(-50%) !important;
-}`);
-  }
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
 
-  if (settings.widenTables) {
-    css.push(`
-.markdown-rendered table {
-  display: table !important;
-  width: max-content !important;
-  min-width: 100% !important;
-  max-width: none !important;
-}`);
-  }
+function numberSetting(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
 
-  if (settings.widenTables && settings.noWrapTableCells) {
-    css.push(`
-.markdown-rendered th,
-.markdown-rendered td {
-  white-space: nowrap !important;
-}`);
-  }
-
-  if (settings.widenCodeBlocks) {
-    css.push(`
-.markdown-rendered pre > code {
-  white-space: pre !important;
-}`);
-  }
-
-  if (mediaContent.length > 0) {
-    css.push(`
-${mediaContent.join(",\n")} {
-  width: auto !important;
-  max-width: none !important;
-  height: auto !important;
-}`);
-  }
-
-  return css.join("\n");
+function booleanSetting(value: unknown, fallback: boolean): boolean {
+  return typeof value === "boolean" ? value : fallback;
 }

@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    name: Build, attest, and publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify release version
+        env:
+          RELEASE_VERSION: ${{ github.ref_name }}
+        run: |
+          node <<'NODE'
+          const fs = require("fs");
+          const releaseVersion = process.env.RELEASE_VERSION.replace(/^v/, "");
+          const manifest = JSON.parse(fs.readFileSync("manifest.json", "utf8"));
+          const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+          const versions = JSON.parse(fs.readFileSync("versions.json", "utf8"));
+
+          if (manifest.version !== releaseVersion) {
+            throw new Error(`manifest.json version ${manifest.version} does not match tag ${releaseVersion}`);
+          }
+
+          if (pkg.version !== releaseVersion) {
+            throw new Error(`package.json version ${pkg.version} does not match tag ${releaseVersion}`);
+          }
+
+          if (!versions[releaseVersion]) {
+            throw new Error(`versions.json is missing ${releaseVersion}`);
+          }
+          NODE
+
+      - name: Build plugin
+        run: npm run build
+
+      - name: Generate artifact attestations
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            manifest.json
+            main.js
+            styles.css
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" manifest.json main.js styles.css \
+            --title "${GITHUB_REF_NAME}" \
+            --notes "Addresses community review findings: CSS now lives in styles.css, settings apply through body classes and CSS variables, popout compatibility uses activeDocument, deprecated settings APIs are removed, and the release includes a lockfile and contributing guide."

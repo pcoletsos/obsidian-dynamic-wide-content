@@ -1,6 +1,6 @@
 {
   "name": "obsidian-dynamic-wide-content",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Wide tables, diagrams, images, and code blocks without widening your prose.",
   "main": "main.js",
   "scripts": {
@@ -21,8 +21,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.11.30",
-    "builtin-modules": "^3.3.0",
-    "esbuild": "^0.20.2",
+    "esbuild": "^0.28.1",
     "obsidian": "latest",
     "typescript": "^5.4.3"
   }

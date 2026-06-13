@@ -1,5 +1,110 @@
-/*
-Dynamic Wide Content injects its active CSS from main.js so user settings can
-change the selector set and maximum width. This file is intentionally minimal
-but kept for Obsidian community-plugin release packaging.
-*/
+body.dynamic-wide-content {
+  --dynamic-wide-content-max: min(
+    var(--dynamic-wide-content-max-width, 1600px),
+    calc(100vw - var(--dynamic-wide-content-viewport-margin, 64px))
+  );
+}
+
+body.dynamic-wide-content.dynamic-wide-content-reading .markdown-preview-view.is-readable-line-width .markdown-preview-sizer,
+body.dynamic-wide-content.dynamic-wide-content-reading .markdown-reading-view.is-readable-line-width .markdown-preview-sizer,
+body.dynamic-wide-content.dynamic-wide-content-reading .markdown-preview-view .markdown-preview-section,
+body.dynamic-wide-content.dynamic-wide-content-reading .markdown-reading-view .markdown-preview-section,
+body.dynamic-wide-content.dynamic-wide-content-live-preview .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer {
+  overflow: visible !important;
+}
+
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-tables .markdown-rendered .el-table,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-tables .markdown-rendered .markdown-preview-sizer > div:has(> table),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-tables .markdown-rendered .markdown-preview-sizer > div:has(> .table-wrapper),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-code .markdown-rendered .el-pre,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-code .markdown-rendered .markdown-preview-sizer > div:has(> pre),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .el-lang-mermaid,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .el-lang-plantuml,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .el-lang-plantuml-png,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .el-lang-plantuml-svg,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .el-lang-puml,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .el-lang-puml-png,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .el-lang-puml-svg,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .markdown-preview-sizer > div:has(> .mermaid),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .markdown-preview-sizer > div:has(> .block-language-mermaid),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .markdown-preview-sizer > div:has(> .block-language-plantuml),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .markdown-preview-sizer > div:has(> .block-language-plantuml-png),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .markdown-preview-sizer > div:has(> .block-language-plantuml-svg),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .markdown-preview-sizer > div:has(> .block-language-puml),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .markdown-preview-sizer > div:has(> .block-language-puml-png),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .markdown-preview-sizer > div:has(> .block-language-puml-svg),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-images .markdown-rendered .el-embed-image,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-images .markdown-rendered .markdown-preview-sizer > div:has(> .internal-embed.image-embed),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-images .markdown-rendered .markdown-preview-sizer > div:has(> .image-embed),
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-images .markdown-rendered .markdown-preview-sizer > div:has(img),
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-tables .markdown-source-view.mod-cm6 .cm-embed-block:has(table),
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-tables .markdown-source-view.mod-cm6 .cm-embed-block:has(.table-wrapper),
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-code .markdown-source-view.mod-cm6 .cm-embed-block:has(pre),
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-diagrams .markdown-source-view.mod-cm6 .cm-embed-block:has(.mermaid),
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-diagrams .markdown-source-view.mod-cm6 .cm-embed-block:has(.block-language-mermaid),
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-diagrams .markdown-source-view.mod-cm6 .cm-embed-block:has(.block-language-plantuml),
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-diagrams .markdown-source-view.mod-cm6 .cm-embed-block:has(.block-language-puml),
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-images .markdown-source-view.mod-cm6 .cm-embed-block:has(.internal-embed.image-embed),
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-images .markdown-source-view.mod-cm6 .cm-embed-block:has(.image-embed),
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-images .markdown-source-view.mod-cm6 .cm-embed-block:has(img) {
+  position: relative !important;
+  left: 50% !important;
+  width: max-content !important;
+  max-width: var(--dynamic-wide-content-max) !important;
+  margin-top: 0.75em !important;
+  margin-bottom: 0.75em !important;
+  overflow-x: auto !important;
+  transform: translateX(-50%) !important;
+}
+
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-tables .markdown-rendered .table-wrapper,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-code .markdown-rendered pre,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .mermaid,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .block-language-mermaid,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .block-language-plantuml,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .block-language-plantuml-png,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .block-language-plantuml-svg,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .block-language-puml,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .block-language-puml-png,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .block-language-puml-svg,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .plantuml-preview-view,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-images .markdown-rendered .internal-embed.image-embed,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-images .markdown-rendered .image-embed {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+}
+
+body.dynamic-wide-content.dynamic-wide-content-tables .markdown-rendered table {
+  display: table !important;
+  width: max-content !important;
+  min-width: 100% !important;
+  max-width: none !important;
+}
+
+body.dynamic-wide-content.dynamic-wide-content-nowrap-tables .markdown-rendered th,
+body.dynamic-wide-content.dynamic-wide-content-nowrap-tables .markdown-rendered td {
+  white-space: nowrap !important;
+}
+
+body.dynamic-wide-content.dynamic-wide-content-code .markdown-rendered pre > code {
+  white-space: pre !important;
+}
+
+body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .mermaid svg,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .block-language-mermaid svg,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .block-language-plantuml img,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .block-language-plantuml svg,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .block-language-plantuml-png img,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .block-language-plantuml-svg svg,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .block-language-puml img,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .block-language-puml svg,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .block-language-puml-png img,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .block-language-puml-svg svg,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .plantuml-preview-view img,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .plantuml-preview-view svg,
+body.dynamic-wide-content.dynamic-wide-content-images .markdown-rendered .internal-embed.image-embed img,
+body.dynamic-wide-content.dynamic-wide-content-images .markdown-rendered .image-embed img {
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
+}
