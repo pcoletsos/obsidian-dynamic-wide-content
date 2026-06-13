@@ -1,0 +1,10 @@
+{
+  "id": "dynamic-wide-content",
+  "name": "Dynamic Wide Content",
+  "version": "1.0.0",
+  "minAppVersion": "1.5.0",
+  "description": "Display wide tables, diagrams, images, and code blocks in scrollable wide frames while preserving Obsidian's normal readable prose width.",
+  "author": "Panagiotis Koletsos",
+  "authorUrl": "https://github.com/pcoletsos",
+  "isDesktopOnly": false
+}

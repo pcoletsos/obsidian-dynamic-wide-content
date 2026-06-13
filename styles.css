@@ -1,0 +1,5 @@
+/*
+Dynamic Wide Content injects its active CSS from main.js so user settings can
+change the selector set and maximum width. This file is intentionally minimal
+but kept for Obsidian community-plugin release packaging.
+*/

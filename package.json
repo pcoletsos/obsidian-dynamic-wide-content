@@ -1,0 +1,29 @@
+{
+  "name": "obsidian-dynamic-wide-content",
+  "version": "1.0.0",
+  "description": "Wide tables, diagrams, images, and code blocks without widening your Obsidian prose.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
+  },
+  "keywords": [
+    "obsidian",
+    "obsidian-plugin",
+    "markdown",
+    "tables",
+    "mermaid",
+    "plantuml",
+    "wide-content",
+    "readable-line-length"
+  ],
+  "author": "Panagiotis Koletsos",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "builtin-modules": "^3.3.0",
+    "esbuild": "^0.20.2",
+    "obsidian": "latest",
+    "typescript": "^5.4.3"
+  }
+}
