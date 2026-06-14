@@ -1,17 +1,16 @@
 # Dynamic Wide Content
 
-**Wide tables, diagrams, images, and code blocks without widening your prose.**
+**Wide tables, diagrams, images, and code blocks without widening normal note text.**
 
 Dynamic Wide Content fixes a common Obsidian annoyance: wide material gets
 squeezed, clipped, or forced into awkward wrapping by the readable line length.
 
-The plugin keeps your prose exactly where it belongs: in Obsidian's comfortable
-reading column. Only genuinely wide blocks break out into a wider scrollable
-frame.
+The plugin keeps regular note text in Obsidian's comfortable reading column.
+Only genuinely wide blocks break out into a wider scrollable frame.
 
 ## What It Does
 
-- Preserves Obsidian's normal readable prose width.
+- Preserves Obsidian's normal comfortable reading width.
 - Expands only wide Markdown tables, code blocks, Mermaid diagrams, PlantUML
   diagrams, and image embeds.
 - Adds horizontal scrolling inside the widened block frame when content is too
@@ -38,9 +37,11 @@ a full-width wall of text.
 - **Maximum wide content width**: Controls how far wide blocks may expand.
 - **Viewport side margin**: Keeps widened blocks away from the edge of the
   Obsidian pane.
-- **Widen tables**: Allows Markdown tables to break out of the prose column.
+- **Widen tables**: Allows Markdown tables to break out of the normal reading
+  column.
 - **Widen diagrams**: Allows Mermaid and PlantUML diagrams to use a wider frame.
-- **Widen images**: Allows embedded images to display wider than prose.
+- **Widen images**: Allows embedded images to display wider than normal note
+  text.
 - **Widen code blocks**: Allows preformatted code blocks to use a wider frame.
 - **Keep table cells on one line**: Prevents wide tables from turning into tall,
   wrapped rows.

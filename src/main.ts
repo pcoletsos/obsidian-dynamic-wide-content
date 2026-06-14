@@ -235,12 +235,12 @@ class DynamicWideContentSettingTab extends PluginSettingTab {
 
     new Setting(containerEl).setName("Display").setHeading();
     containerEl.createEl("p", {
-      text: "Use wide tables, diagrams, images, and code blocks without widening normal prose."
+      text: "Use wide tables, diagrams, images, and code blocks without widening normal note text."
     });
 
     new Setting(containerEl)
       .setName("Maximum wide content width")
-      .setDesc("Controls how far wide blocks may expand while prose keeps readable width.")
+      .setDesc("Controls how far wide blocks may expand while normal note text stays readable.")
       .addSlider((slider) => slider
         .setLimits(900, 2400, 50)
         .setValue(this.plugin.settings.maxWidth)
@@ -260,9 +260,9 @@ class DynamicWideContentSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }));
 
-    addToggle(containerEl, "Widen tables", "Allow Markdown tables to break out of the prose column.", this.plugin, "widenTables");
+    addToggle(containerEl, "Widen tables", "Allow Markdown tables to break out of the normal reading column.", this.plugin, "widenTables");
     addToggle(containerEl, "Widen diagrams", "Allow Mermaid and PlantUML diagrams to use a wider scrollable frame.", this.plugin, "widenDiagrams");
-    addToggle(containerEl, "Widen images", "Allow embedded images to display wider than prose.", this.plugin, "widenImages");
+    addToggle(containerEl, "Widen images", "Allow embedded images to display wider than normal note text.", this.plugin, "widenImages");
     addToggle(containerEl, "Widen code blocks", "Allow preformatted code blocks to use a wider scrollable frame.", this.plugin, "widenCodeBlocks");
     addToggle(containerEl, "Keep table cells on one line", "Prevents wide tables from wrapping every cell into tall unreadable rows.", this.plugin, "noWrapTableCells");
     addToggle(containerEl, "Reading view support", "Apply selective widening in Reading view.", this.plugin, "readingView");

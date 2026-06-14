@@ -3,7 +3,7 @@
   "name": "Dynamic Wide Content",
   "version": "1.0.2",
   "minAppVersion": "1.5.0",
-  "description": "Display wide tables, diagrams, images, and code blocks in scrollable wide frames while preserving normal readable prose width.",
+  "description": "Display wide tables, diagrams, images, and code blocks in scrollable wide frames while keeping normal note text readable.",
   "author": "Panagiotis Koletsos",
   "authorUrl": "https://github.com/pcoletsos",
   "isDesktopOnly": false
