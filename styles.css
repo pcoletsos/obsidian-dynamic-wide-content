@@ -1,6 +1,7 @@
 body.dynamic-wide-content {
-  --dynamic-wide-content-side-expand: max(0px, calc((var(--dynamic-wide-content-max-width, 1600px) - 100%) / 2));
-  --dynamic-wide-content-max-side: max(0px, calc((100vw - 100% - var(--dynamic-wide-content-viewport-margin, 64px)) / 2));
+  --dynamic-wide-content-reading-width: var(--file-line-width, 700px);
+  --dynamic-wide-content-side-expand: max(0px, calc((var(--dynamic-wide-content-max-width, 1600px) - var(--dynamic-wide-content-reading-width)) / 2));
+  --dynamic-wide-content-max-side: max(0px, calc((100vw - var(--dynamic-wide-content-reading-width) - var(--dynamic-wide-content-viewport-margin, 64px)) / 2));
   --dynamic-wide-content-margin: min(var(--dynamic-wide-content-side-expand), var(--dynamic-wide-content-max-side));
 }
 
@@ -51,14 +52,6 @@ body.dynamic-wide-content.dynamic-wide-content-tasknotes .is-readable-line-width
   max-width: calc(100% + (2 * var(--dynamic-wide-content-margin))) !important;
   margin-left: calc(-1 * var(--dynamic-wide-content-margin)) !important;
   margin-right: calc(-1 * var(--dynamic-wide-content-margin)) !important;
-}
-
-body.dynamic-wide-content.dynamic-wide-content-tables .markdown-rendered table.dynamic-wide-content-table,
-body.dynamic-wide-content.dynamic-wide-content-tables .markdown-source-view.mod-cm6 table.dynamic-wide-content-table {
-  display: table;
-  width: max-content;
-  min-width: 100%;
-  max-width: none;
 }
 
 body.dynamic-wide-content.dynamic-wide-content-tables.dynamic-wide-content-nowrap-tables .markdown-rendered table.dynamic-wide-content-table th,

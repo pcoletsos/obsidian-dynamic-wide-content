@@ -362,31 +362,21 @@ function markOverflowContainers(root: HTMLElement) {
 }
 
 function markTables(root: HTMLElement) {
-  forEachClassMatch(root, TABLE_CONTAINER_CLASSES, (element) => {
-    if (element.parentElement && containsClass(element.parentElement, TABLE_CONTAINER_CLASSES)) {
-      return;
-    }
-    markWideBlock(element, TABLE_BLOCK_CLASS);
-    markWideInner(element, TABLE_INNER_CLASS);
-  });
-
   forEachMatch(root, "table", (table) => {
     if (!isMarkdownContent(table)) return;
 
     table.classList.add(TABLE_ELEMENT_CLASS);
-    markWideBlock(getWideBlock(table, TABLE_CONTAINER_CLASSES), TABLE_BLOCK_CLASS);
+    const block = getWideBlock(table, TABLE_CONTAINER_CLASSES);
+    markWideBlock(block, TABLE_BLOCK_CLASS);
   });
 }
 
 function markCodeBlocks(root: HTMLElement) {
-  forEachClassMatch(root, CODE_CONTAINER_CLASSES, (element) => {
-    markWideBlock(element, CODE_BLOCK_CLASS);
-  });
-
   forEachMatch(root, "pre", (pre) => {
     if (!isMarkdownContent(pre)) return;
 
-    markWideBlock(getWideBlock(pre, CODE_CONTAINER_CLASSES), CODE_BLOCK_CLASS);
+    const block = getWideBlock(pre, CODE_CONTAINER_CLASSES);
+    markWideBlock(block, CODE_BLOCK_CLASS);
     markWideInner(pre, CODE_INNER_CLASS);
   });
 }
@@ -395,14 +385,16 @@ function markDiagrams(root: HTMLElement) {
   forEachMatch(root, DIAGRAM_CONTAINER_SELECTOR, (element) => {
     if (!isMarkdownContent(element)) return;
 
-    markWideBlock(element, DIAGRAM_BLOCK_CLASS);
+    const block = getWideBlock(element, DIAGRAM_CONTAINER_CLASSES);
+    markWideBlock(block, DIAGRAM_BLOCK_CLASS);
     markMediaChildren(element);
   });
 
   forEachMatch(root, DIAGRAM_CONTENT_SELECTOR, (element) => {
     if (!isMarkdownContent(element)) return;
 
-    markWideBlock(getWideBlock(element, DIAGRAM_CONTAINER_CLASSES), DIAGRAM_BLOCK_CLASS);
+    const block = getWideBlock(element, DIAGRAM_CONTAINER_CLASSES);
+    markWideBlock(block, DIAGRAM_BLOCK_CLASS);
     markWideInner(element, DIAGRAM_INNER_CLASS);
     markMediaChildren(element);
   });
@@ -412,7 +404,8 @@ function markImages(root: HTMLElement) {
   forEachMatch(root, IMAGE_CONTAINER_SELECTOR, (element) => {
     if (!isMarkdownContent(element)) return;
 
-    markWideBlock(getWideBlock(element, IMAGE_CONTAINER_CLASSES), IMAGE_BLOCK_CLASS);
+    const block = getWideBlock(element, IMAGE_CONTAINER_CLASSES);
+    markWideBlock(block, IMAGE_BLOCK_CLASS);
     markWideInner(element, IMAGE_INNER_CLASS);
     markMediaChildren(element);
   });
@@ -420,7 +413,8 @@ function markImages(root: HTMLElement) {
   forEachMatch(root, "img", (image) => {
     if (!isMarkdownContent(image) || isDiagramContent(image)) return;
 
-    markWideBlock(getWideBlock(image, IMAGE_CONTAINER_CLASSES), IMAGE_BLOCK_CLASS);
+    const block = getWideBlock(image, IMAGE_CONTAINER_CLASSES);
+    markWideBlock(block, IMAGE_BLOCK_CLASS);
     markMedia(image);
   });
 }
@@ -429,7 +423,8 @@ function markTaskNotes(root: HTMLElement) {
   forEachMatch(root, TASKNOTES_SELECTOR, (element) => {
     if (!isMarkdownContent(element)) return;
 
-    markWideBlock(getWideBlock(element, TASKNOTES_CONTAINER_CLASSES), TASKNOTES_BLOCK_CLASS);
+    const block = getWideBlock(element, TASKNOTES_CONTAINER_CLASSES);
+    markWideBlock(block, TASKNOTES_BLOCK_CLASS);
     markWideInner(element, TASKNOTES_INNER_CLASS);
   });
 }
@@ -465,7 +460,29 @@ function markOverflowAncestors(element: HTMLElement) {
 }
 
 function getWideBlock(element: HTMLElement, containerClasses: readonly string[]): HTMLElement {
-  return closestByClass(element, [...containerClasses, "cm-embed-block"]) ?? element;
+  let current: HTMLElement | null = element;
+  let outermost: HTMLElement | null = null;
+  const allTargetClasses = [...containerClasses, "cm-embed-block"];
+
+  while (current && isHTMLElement(current)) {
+    if (containsClass(current, allTargetClasses)) {
+      outermost = current;
+    }
+    if (
+      containsClass(current, [
+        "markdown-rendered",
+        "markdown-source-view",
+        "cm-content",
+        "markdown-preview-sizer",
+        "cm-sizer"
+      ])
+    ) {
+      break;
+    }
+    current = current.parentElement;
+  }
+
+  return outermost ?? element;
 }
 
 function isMarkdownContent(element: HTMLElement): boolean {
