@@ -1,8 +1,8 @@
 body.dynamic-wide-content {
-  --dynamic-wide-content-reading-width: var(--file-line-width, 700px);
-  --dynamic-wide-content-side-expand: max(0px, calc((var(--dynamic-wide-content-max-width, 1600px) - var(--dynamic-wide-content-reading-width)) / 2));
-  --dynamic-wide-content-max-side: max(0px, calc((100vw - var(--dynamic-wide-content-reading-width) - var(--dynamic-wide-content-viewport-margin, 64px)) / 2));
-  --dynamic-wide-content-margin: min(var(--dynamic-wide-content-side-expand), var(--dynamic-wide-content-max-side));
+  --dynamic-wide-content-max: min(
+    var(--dynamic-wide-content-max-width, 1600px),
+    calc(100vw - var(--dynamic-wide-content-viewport-margin, 64px))
+  );
 }
 
 body.dynamic-wide-content .dynamic-wide-content-overflow-visible,
@@ -22,13 +22,14 @@ body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content
 body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-diagrams .markdown-source-view.mod-cm6 .dynamic-wide-content-diagram-block,
 body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-images .markdown-source-view.mod-cm6 .dynamic-wide-content-image-block,
 body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-tasknotes .markdown-source-view.mod-cm6 .dynamic-wide-content-tasknotes-block {
-  width: calc(100% + (2 * var(--dynamic-wide-content-margin))) !important;
-  max-width: calc(100% + (2 * var(--dynamic-wide-content-margin))) !important;
-  margin-left: calc(-1 * var(--dynamic-wide-content-margin)) !important;
-  margin-right: calc(-1 * var(--dynamic-wide-content-margin)) !important;
+  position: relative;
+  left: 50%;
+  width: max-content;
+  max-width: var(--dynamic-wide-content-max) !important;
   margin-top: var(--tn-relationships-widget-margin-top, 0.75em);
   margin-bottom: 0.75em;
   overflow-x: auto;
+  transform: translateX(-50%);
   box-sizing: border-box;
 }
 
@@ -48,10 +49,10 @@ body.dynamic-wide-content.dynamic-wide-content-tasknotes .markdown-source-view.m
 
 body.dynamic-wide-content.dynamic-wide-content-tasknotes .is-readable-line-width .dynamic-wide-content-tasknotes-block.tasknotes-relationships-widget,
 body.dynamic-wide-content.dynamic-wide-content-tasknotes .is-readable-line-width .dynamic-wide-content-tasknotes-block.task-card-note-widget {
-  width: calc(100% + (2 * var(--dynamic-wide-content-margin))) !important;
-  max-width: calc(100% + (2 * var(--dynamic-wide-content-margin))) !important;
-  margin-left: calc(-1 * var(--dynamic-wide-content-margin)) !important;
-  margin-right: calc(-1 * var(--dynamic-wide-content-margin)) !important;
+  width: max-content;
+  min-width: 100%;
+  max-width: var(--dynamic-wide-content-max) !important;
+  margin-inline: 0;
 }
 
 body.dynamic-wide-content.dynamic-wide-content-tables.dynamic-wide-content-nowrap-tables .markdown-rendered table.dynamic-wide-content-table th,

@@ -47,11 +47,11 @@ assert(
   "styles.css must ensure .cm-content has overflow: visible in Live Preview"
 );
 
-// Negative-margin symmetric breakout rules (prevents left clipping)
+// Breakout rules
 assert(
-  cssContent.includes("--dynamic-wide-content-margin") &&
-  cssContent.includes("margin-left: calc(-1 * var(--dynamic-wide-content-margin)) !important"),
-  "styles.css must use symmetric negative margins to expand blocks without negative coordinate cropping"
+  cssContent.includes("transform: translateX(-50%)") &&
+  cssContent.includes("max-width: var(--dynamic-wide-content-max) !important"),
+  "styles.css must center wide blocks with transform and !important max-width"
 );
 
 console.log("  ✔ styles.css validations passed.");
