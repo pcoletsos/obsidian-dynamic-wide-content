@@ -50,8 +50,13 @@ assert(
 // Breakout rules
 assert(
   cssContent.includes("transform: translateX(-50%)") &&
-  cssContent.includes("max-width: var(--dynamic-wide-content-max) !important"),
-  "styles.css must center wide blocks with transform and !important max-width"
+  cssContent.includes("max-width: var(--dynamic-wide-content-max);"),
+  "styles.css must center wide blocks with transform and CSS variable max-width"
+);
+
+assert(
+  !cssContent.includes("!important"),
+  "styles.css must avoid !important to adhere to Obsidian styling best practices"
 );
 
 console.log("  ✔ styles.css validations passed.");
@@ -59,6 +64,11 @@ console.log("  ✔ styles.css validations passed.");
 // 2. Verify main.js bundle content
 const mainJsContent = fs.readFileSync("main.js", "utf8");
 console.log("✔ Checking main.js bundle...");
+
+assert(
+  mainJsContent.includes("getSettingDefinitions"),
+  "main.js must contain getSettingDefinitions for Obsidian 1.13+ declarative settings search"
+);
 
 assert(
   mainJsContent.includes("widenTaskNotes"),

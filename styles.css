@@ -25,7 +25,7 @@ body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content
   position: relative;
   left: 50%;
   width: max-content;
-  max-width: var(--dynamic-wide-content-max) !important;
+  max-width: var(--dynamic-wide-content-max);
   margin-top: var(--tn-relationships-widget-margin-top, 0.75em);
   margin-bottom: 0.75em;
   overflow-x: auto;
@@ -51,7 +51,7 @@ body.dynamic-wide-content.dynamic-wide-content-tasknotes .is-readable-line-width
 body.dynamic-wide-content.dynamic-wide-content-tasknotes .is-readable-line-width .dynamic-wide-content-tasknotes-block.task-card-note-widget {
   width: max-content;
   min-width: 100%;
-  max-width: var(--dynamic-wide-content-max) !important;
+  max-width: var(--dynamic-wide-content-max);
   margin-inline: 0;
 }
 

@@ -251,6 +251,81 @@ class DynamicWideContentSettingTab extends PluginSettingTab {
     this.plugin = plugin;
   }
 
+  getSettingDefinitions() {
+    return [
+      {
+        type: "heading",
+        name: "Display"
+      },
+      {
+        type: "slider",
+        name: "Maximum wide content width",
+        desc: "Controls how far wide blocks may expand while normal note text stays readable.",
+        key: "maxWidth",
+        min: 900,
+        max: 2400,
+        step: 50
+      },
+      {
+        type: "slider",
+        name: "Viewport side margin",
+        desc: "Keeps widened blocks away from the edge of the pane.",
+        key: "viewportMargin",
+        min: 0,
+        max: 160,
+        step: 8
+      },
+      {
+        type: "toggle",
+        name: "Widen tables",
+        desc: "Allow Markdown tables to break out of the normal reading column.",
+        key: "widenTables"
+      },
+      {
+        type: "toggle",
+        name: "Widen diagrams",
+        desc: "Allow Mermaid and PlantUML diagrams to use a wider scrollable frame.",
+        key: "widenDiagrams"
+      },
+      {
+        type: "toggle",
+        name: "Widen images",
+        desc: "Allow embedded images to display wider than normal note text.",
+        key: "widenImages"
+      },
+      {
+        type: "toggle",
+        name: "Widen code blocks",
+        desc: "Allow preformatted code blocks to use a wider scrollable frame.",
+        key: "widenCodeBlocks"
+      },
+      {
+        type: "toggle",
+        name: "Widen TaskNotes widgets",
+        desc: "Allow TaskNotes relationship boards and widgets to break out of the normal reading column.",
+        key: "widenTaskNotes"
+      },
+      {
+        type: "toggle",
+        name: "Keep table cells on one line",
+        desc: "Prevents wide tables from wrapping every cell into tall unreadable rows.",
+        key: "noWrapTableCells"
+      },
+      {
+        type: "toggle",
+        name: "Reading view support",
+        desc: "Apply selective widening in Reading view.",
+        key: "readingView"
+      },
+      {
+        type: "toggle",
+        name: "Live Preview support",
+        desc: "Apply selective widening to rendered embeds in Live Preview.",
+        key: "livePreview"
+      }
+    ];
+  }
+
   display(): void {
     const { containerEl } = this;
     containerEl.empty();
