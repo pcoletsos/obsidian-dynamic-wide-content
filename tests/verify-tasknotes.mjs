@@ -47,25 +47,11 @@ assert(
   "styles.css must ensure .cm-content has overflow: visible in Live Preview"
 );
 
+// Negative-margin symmetric breakout rules (prevents left clipping)
 assert(
-  cssContent.includes("max-width: var(--dynamic-wide-content-max) !important"),
-  "styles.css must enforce max-width with !important on Live Preview wide blocks to override theme max-width: 100%"
-);
-
-assert(
-  cssContent.includes(".markdown-source-view.mod-cm6 .dynamic-wide-content-table-block .cm-table-widget"),
-  "styles.css must allow Live Preview .cm-table-widget to expand to max-content"
-);
-
-// Container queries for exact pane bounding (prevent left clipping)
-assert(
-  cssContent.includes("100cqw"),
-  "styles.css must bound wide blocks using 100cqw container queries to prevent left clipping"
-);
-
-assert(
-  cssContent.includes("container-type: inline-size"),
-  "styles.css must declare container-type: inline-size on note view containers"
+  cssContent.includes("--dynamic-wide-content-margin") &&
+  cssContent.includes("margin-left: calc(-1 * var(--dynamic-wide-content-margin)) !important"),
+  "styles.css must use symmetric negative margins to expand blocks without negative coordinate cropping"
 );
 
 console.log("  ✔ styles.css validations passed.");

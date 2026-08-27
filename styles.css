@@ -1,17 +1,7 @@
 body.dynamic-wide-content {
-  --dynamic-wide-content-max: min(
-    var(--dynamic-wide-content-max-width, 1600px),
-    calc(100cqw - var(--dynamic-wide-content-viewport-margin, 64px)),
-    calc(100vw - var(--dynamic-wide-content-viewport-margin, 64px))
-  );
-}
-
-body.dynamic-wide-content .workspace-leaf,
-body.dynamic-wide-content .workspace-leaf-content,
-body.dynamic-wide-content .view-content,
-body.dynamic-wide-content .markdown-rendered,
-body.dynamic-wide-content .markdown-source-view {
-  container-type: inline-size;
+  --dynamic-wide-content-side-expand: max(0px, calc((var(--dynamic-wide-content-max-width, 1600px) - 100%) / 2));
+  --dynamic-wide-content-max-side: max(0px, calc((100vw - 100% - var(--dynamic-wide-content-viewport-margin, 64px)) / 2));
+  --dynamic-wide-content-margin: min(var(--dynamic-wide-content-side-expand), var(--dynamic-wide-content-max-side));
 }
 
 body.dynamic-wide-content .dynamic-wide-content-overflow-visible,
@@ -31,15 +21,13 @@ body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content
 body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-diagrams .markdown-source-view.mod-cm6 .dynamic-wide-content-diagram-block,
 body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-images .markdown-source-view.mod-cm6 .dynamic-wide-content-image-block,
 body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-tasknotes .markdown-source-view.mod-cm6 .dynamic-wide-content-tasknotes-block {
-  position: relative;
-  left: 50%;
-  width: max-content;
-  min-width: 100%;
-  max-width: var(--dynamic-wide-content-max) !important;
+  width: calc(100% + (2 * var(--dynamic-wide-content-margin))) !important;
+  max-width: calc(100% + (2 * var(--dynamic-wide-content-margin))) !important;
+  margin-left: calc(-1 * var(--dynamic-wide-content-margin)) !important;
+  margin-right: calc(-1 * var(--dynamic-wide-content-margin)) !important;
   margin-top: var(--tn-relationships-widget-margin-top, 0.75em);
   margin-bottom: 0.75em;
   overflow-x: auto;
-  transform: translateX(-50%);
   box-sizing: border-box;
 }
 
@@ -57,22 +45,12 @@ body.dynamic-wide-content.dynamic-wide-content-tasknotes .markdown-source-view.m
   overflow-x: auto;
 }
 
-body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-tables .markdown-source-view.mod-cm6 .dynamic-wide-content-table-block .cm-table-widget,
-body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-tables .markdown-source-view.mod-cm6 .dynamic-wide-content-table-block .table-wrapper,
-body.dynamic-wide-content.dynamic-wide-content-live-preview .markdown-source-view.mod-cm6 .dynamic-wide-content-wide-block > .markdown-rendered,
-body.dynamic-wide-content.dynamic-wide-content-live-preview .markdown-source-view.mod-cm6 .dynamic-wide-content-wide-block .image-embed,
-body.dynamic-wide-content.dynamic-wide-content-live-preview .markdown-source-view.mod-cm6 .dynamic-wide-content-wide-block .media-embed {
-  width: max-content;
-  min-width: 100%;
-  max-width: none;
-}
-
 body.dynamic-wide-content.dynamic-wide-content-tasknotes .is-readable-line-width .dynamic-wide-content-tasknotes-block.tasknotes-relationships-widget,
 body.dynamic-wide-content.dynamic-wide-content-tasknotes .is-readable-line-width .dynamic-wide-content-tasknotes-block.task-card-note-widget {
-  width: max-content;
-  min-width: 100%;
-  max-width: var(--dynamic-wide-content-max);
-  margin-inline: 0;
+  width: calc(100% + (2 * var(--dynamic-wide-content-margin))) !important;
+  max-width: calc(100% + (2 * var(--dynamic-wide-content-margin))) !important;
+  margin-left: calc(-1 * var(--dynamic-wide-content-margin)) !important;
+  margin-right: calc(-1 * var(--dynamic-wide-content-margin)) !important;
 }
 
 body.dynamic-wide-content.dynamic-wide-content-tables .markdown-rendered table.dynamic-wide-content-table,

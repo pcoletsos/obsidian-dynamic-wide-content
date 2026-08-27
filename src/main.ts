@@ -363,6 +363,9 @@ function markOverflowContainers(root: HTMLElement) {
 
 function markTables(root: HTMLElement) {
   forEachClassMatch(root, TABLE_CONTAINER_CLASSES, (element) => {
+    if (element.parentElement && containsClass(element.parentElement, TABLE_CONTAINER_CLASSES)) {
+      return;
+    }
     markWideBlock(element, TABLE_BLOCK_CLASS);
     markWideInner(element, TABLE_INNER_CLASS);
   });
