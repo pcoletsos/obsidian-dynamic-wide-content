@@ -7,6 +7,7 @@ interface DynamicWideContentSettings {
   widenCodeBlocks: boolean;
   widenDiagrams: boolean;
   widenImages: boolean;
+  widenTaskNotes: boolean;
   noWrapTableCells: boolean;
   readingView: boolean;
   livePreview: boolean;
@@ -17,6 +18,7 @@ type ToggleSetting =
   | "widenCodeBlocks"
   | "widenDiagrams"
   | "widenImages"
+  | "widenTaskNotes"
   | "noWrapTableCells"
   | "readingView"
   | "livePreview";
@@ -28,6 +30,7 @@ const DEFAULT_SETTINGS: DynamicWideContentSettings = {
   widenCodeBlocks: true,
   widenDiagrams: true,
   widenImages: true,
+  widenTaskNotes: true,
   noWrapTableCells: true,
   readingView: true,
   livePreview: true
@@ -41,6 +44,7 @@ const BODY_CLASSES = [
   "dynamic-wide-content-code",
   "dynamic-wide-content-diagrams",
   "dynamic-wide-content-images",
+  "dynamic-wide-content-tasknotes",
   "dynamic-wide-content-nowrap-tables"
 ];
 
@@ -56,6 +60,8 @@ const DIAGRAM_BLOCK_CLASS = "dynamic-wide-content-diagram-block";
 const DIAGRAM_INNER_CLASS = "dynamic-wide-content-diagram-inner";
 const IMAGE_BLOCK_CLASS = "dynamic-wide-content-image-block";
 const IMAGE_INNER_CLASS = "dynamic-wide-content-image-inner";
+const TASKNOTES_BLOCK_CLASS = "dynamic-wide-content-tasknotes-block";
+const TASKNOTES_INNER_CLASS = "dynamic-wide-content-tasknotes-inner";
 const MEDIA_CLASS = "dynamic-wide-content-media";
 
 const MARKER_CLASSES = [
@@ -71,18 +77,27 @@ const MARKER_CLASSES = [
   DIAGRAM_INNER_CLASS,
   IMAGE_BLOCK_CLASS,
   IMAGE_INNER_CLASS,
+  TASKNOTES_BLOCK_CLASS,
+  TASKNOTES_INNER_CLASS,
   MEDIA_CLASS
 ];
 
 const OVERFLOW_CONTAINER_CLASSES = [
   "markdown-preview-sizer",
   "markdown-preview-section",
-  "cm-contentContainer"
+  "cm-contentContainer",
+  "cm-content",
+  "cm-sizer"
 ];
 
-const TABLE_CONTAINER_CLASSES = ["el-table", "table-wrapper"];
+const TABLE_CONTAINER_CLASSES = ["el-table", "table-wrapper", "cm-table-widget"];
 const CODE_CONTAINER_CLASSES = ["el-pre"];
 const IMAGE_CONTAINER_CLASSES = ["el-embed-image", "internal-embed", "image-embed"];
+const TASKNOTES_CONTAINER_CLASSES = [
+  "tasknotes-relationships-widget",
+  "task-card-note-widget",
+  "tasknotes-task-card-note-widget"
+];
 const DIAGRAM_CONTAINER_CLASSES = [
   "el-lang-mermaid",
   "el-lang-plantuml",
@@ -109,6 +124,12 @@ const MARKER_SELECTOR = MARKER_CLASSES.map((className) => `.${className}`).join(
 const DIAGRAM_CONTAINER_SELECTOR = DIAGRAM_CONTAINER_CLASSES.map((className) => `.${className}`).join(", ");
 const DIAGRAM_CONTENT_SELECTOR = DIAGRAM_CONTENT_CLASSES.map((className) => `.${className}`).join(", ");
 const IMAGE_CONTAINER_SELECTOR = ".el-embed-image, .internal-embed.image-embed, .image-embed";
+const TASKNOTES_SELECTOR = [
+  ".tasknotes-relationships-widget",
+  ".task-card-note-widget",
+  ".tasknotes-task-card-note-widget",
+  "[data-widget-type='relationships']"
+].join(", ");
 
 export default class DynamicWideContentPlugin extends Plugin {
   settings: DynamicWideContentSettings = { ...DEFAULT_SETTINGS };
@@ -176,6 +197,7 @@ export default class DynamicWideContentPlugin extends Plugin {
     body.classList.toggle("dynamic-wide-content-code", this.settings.widenCodeBlocks);
     body.classList.toggle("dynamic-wide-content-diagrams", this.settings.widenDiagrams);
     body.classList.toggle("dynamic-wide-content-images", this.settings.widenImages);
+    body.classList.toggle("dynamic-wide-content-tasknotes", this.settings.widenTaskNotes);
     body.classList.toggle("dynamic-wide-content-nowrap-tables", this.settings.noWrapTableCells);
   }
 
@@ -264,6 +286,7 @@ class DynamicWideContentSettingTab extends PluginSettingTab {
     addToggle(containerEl, "Widen diagrams", "Allow Mermaid and PlantUML diagrams to use a wider scrollable frame.", this.plugin, "widenDiagrams");
     addToggle(containerEl, "Widen images", "Allow embedded images to display wider than normal note text.", this.plugin, "widenImages");
     addToggle(containerEl, "Widen code blocks", "Allow preformatted code blocks to use a wider scrollable frame.", this.plugin, "widenCodeBlocks");
+    addToggle(containerEl, "Widen TaskNotes widgets", "Allow TaskNotes relationship boards and widgets to break out of the normal reading column.", this.plugin, "widenTaskNotes");
     addToggle(containerEl, "Keep table cells on one line", "Prevents wide tables from wrapping every cell into tall unreadable rows.", this.plugin, "noWrapTableCells");
     addToggle(containerEl, "Reading view support", "Apply selective widening in Reading view.", this.plugin, "readingView");
     addToggle(containerEl, "Live Preview support", "Apply selective widening to rendered embeds in Live Preview.", this.plugin, "livePreview");
@@ -298,6 +321,7 @@ function normalizeSettings(saved: unknown): DynamicWideContentSettings {
     widenCodeBlocks: booleanSetting(value.widenCodeBlocks, DEFAULT_SETTINGS.widenCodeBlocks),
     widenDiagrams: booleanSetting(value.widenDiagrams, DEFAULT_SETTINGS.widenDiagrams),
     widenImages: booleanSetting(value.widenImages, DEFAULT_SETTINGS.widenImages),
+    widenTaskNotes: booleanSetting(value.widenTaskNotes, DEFAULT_SETTINGS.widenTaskNotes),
     noWrapTableCells: booleanSetting(value.noWrapTableCells, DEFAULT_SETTINGS.noWrapTableCells),
     readingView: booleanSetting(value.readingView, DEFAULT_SETTINGS.readingView),
     livePreview: booleanSetting(value.livePreview, DEFAULT_SETTINGS.livePreview)
@@ -322,6 +346,7 @@ function markWideContent(root: HTMLElement) {
   markCodeBlocks(root);
   markDiagrams(root);
   markImages(root);
+  markTaskNotes(root);
 }
 
 function clearWideContentMarkers(root: HTMLElement) {
@@ -397,6 +422,15 @@ function markImages(root: HTMLElement) {
   });
 }
 
+function markTaskNotes(root: HTMLElement) {
+  forEachMatch(root, TASKNOTES_SELECTOR, (element) => {
+    if (!isMarkdownContent(element)) return;
+
+    markWideBlock(getWideBlock(element, TASKNOTES_CONTAINER_CLASSES), TASKNOTES_BLOCK_CLASS);
+    markWideInner(element, TASKNOTES_INNER_CLASS);
+  });
+}
+
 function markWideBlock(element: HTMLElement, blockClass: string) {
   element.classList.add(WIDE_BLOCK_CLASS, blockClass);
   markOverflowAncestors(element);
@@ -437,7 +471,9 @@ function isMarkdownContent(element: HTMLElement): boolean {
     "markdown-source-view",
     "markdown-preview-section",
     "markdown-preview-sizer",
-    "cm-embed-block"
+    "cm-embed-block",
+    "cm-content",
+    "cm-sizer"
   ]) !== null;
 }
 

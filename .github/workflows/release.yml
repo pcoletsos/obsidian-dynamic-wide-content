@@ -69,4 +69,4 @@ jobs:
         run: |
           gh release create "${GITHUB_REF_NAME}" manifest.json main.js styles.css \
             --title "${GITHUB_REF_NAME}" \
-            --notes "Addresses community review findings: CSS now lives in styles.css, settings apply through body classes and CSS variables, popout compatibility uses activeDocument, deprecated settings APIs are removed, and the release includes a lockfile and contributing guide."
+            --generate-notes

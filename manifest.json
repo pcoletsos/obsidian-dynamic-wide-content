@@ -1,7 +1,7 @@
 {
   "id": "dynamic-wide-content",
   "name": "Dynamic Wide Content",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "minAppVersion": "1.5.0",
   "description": "Display wide tables, diagrams, images, and code blocks in scrollable wide frames while keeping normal note text readable.",
   "author": "Panagiotis Koletsos",

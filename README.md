@@ -12,7 +12,7 @@ Only genuinely wide blocks break out into a wider scrollable frame.
 
 - Preserves Obsidian's normal comfortable reading width.
 - Expands only wide Markdown tables, code blocks, Mermaid diagrams, PlantUML
-  diagrams, and image embeds.
+  diagrams, TaskNotes widgets (such as relationship Kanban boards), and image embeds.
 - Adds horizontal scrolling inside the widened block frame when content is too
   wide for the pane.
 - Works in Reading view and Live Preview.
@@ -26,6 +26,7 @@ notes. It is painful for wide content:
 - pipeline or comparison tables
 - architecture diagrams
 - generated Mermaid and PlantUML output
+- TaskNotes relationship Kanban boards and multi-column widgets
 - screenshots and reference images
 - long code or log blocks
 
@@ -43,6 +44,8 @@ a full-width wall of text.
 - **Widen images**: Allows embedded images to display wider than normal note
   text.
 - **Widen code blocks**: Allows preformatted code blocks to use a wider frame.
+- **Widen TaskNotes widgets**: Allows TaskNotes relationship boards and widgets
+  to break out of the normal reading column.
 - **Keep table cells on one line**: Prevents wide tables from turning into tall,
   wrapped rows.
 - **Reading view support**: Applies widening in Reading view.

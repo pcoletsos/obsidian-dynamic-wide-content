@@ -1,11 +1,12 @@
 {
   "name": "obsidian-dynamic-wide-content",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Wide tables, diagrams, images, and code blocks without widening normal note text.",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
-    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "test": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && node tests/verify-tasknotes.mjs"
   },
   "keywords": [
     "obsidian",

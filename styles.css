@@ -5,7 +5,10 @@ body.dynamic-wide-content {
   );
 }
 
-body.dynamic-wide-content .dynamic-wide-content-overflow-visible {
+body.dynamic-wide-content .dynamic-wide-content-overflow-visible,
+body.dynamic-wide-content.dynamic-wide-content-live-preview .markdown-source-view.mod-cm6 .cm-sizer,
+body.dynamic-wide-content.dynamic-wide-content-live-preview .markdown-source-view.mod-cm6 .cm-contentContainer,
+body.dynamic-wide-content.dynamic-wide-content-live-preview .markdown-source-view.mod-cm6 .cm-content {
   overflow: visible;
 }
 
@@ -13,30 +16,54 @@ body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-tabl
 body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-code .markdown-rendered .dynamic-wide-content-code-block,
 body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-diagrams .markdown-rendered .dynamic-wide-content-diagram-block,
 body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-images .markdown-rendered .dynamic-wide-content-image-block,
+body.dynamic-wide-content.dynamic-wide-content-reading.dynamic-wide-content-tasknotes .markdown-rendered .dynamic-wide-content-tasknotes-block,
 body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-tables .markdown-source-view.mod-cm6 .dynamic-wide-content-table-block,
 body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-code .markdown-source-view.mod-cm6 .dynamic-wide-content-code-block,
 body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-diagrams .markdown-source-view.mod-cm6 .dynamic-wide-content-diagram-block,
-body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-images .markdown-source-view.mod-cm6 .dynamic-wide-content-image-block {
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-images .markdown-source-view.mod-cm6 .dynamic-wide-content-image-block,
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-tasknotes .markdown-source-view.mod-cm6 .dynamic-wide-content-tasknotes-block {
   position: relative;
   left: 50%;
   width: max-content;
-  max-width: var(--dynamic-wide-content-max);
-  margin-top: 0.75em;
+  min-width: 100%;
+  max-width: var(--dynamic-wide-content-max) !important;
+  margin-top: var(--tn-relationships-widget-margin-top, 0.75em);
   margin-bottom: 0.75em;
   overflow-x: auto;
   transform: translateX(-50%);
+  box-sizing: border-box;
 }
 
 body.dynamic-wide-content.dynamic-wide-content-tables .markdown-rendered .dynamic-wide-content-table-inner,
 body.dynamic-wide-content.dynamic-wide-content-code .markdown-rendered .dynamic-wide-content-code-inner,
 body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-rendered .dynamic-wide-content-diagram-inner,
 body.dynamic-wide-content.dynamic-wide-content-images .markdown-rendered .dynamic-wide-content-image-inner,
+body.dynamic-wide-content.dynamic-wide-content-tasknotes .markdown-rendered .dynamic-wide-content-tasknotes-inner,
 body.dynamic-wide-content.dynamic-wide-content-tables .markdown-source-view.mod-cm6 .dynamic-wide-content-table-inner,
 body.dynamic-wide-content.dynamic-wide-content-code .markdown-source-view.mod-cm6 .dynamic-wide-content-code-inner,
 body.dynamic-wide-content.dynamic-wide-content-diagrams .markdown-source-view.mod-cm6 .dynamic-wide-content-diagram-inner,
-body.dynamic-wide-content.dynamic-wide-content-images .markdown-source-view.mod-cm6 .dynamic-wide-content-image-inner {
+body.dynamic-wide-content.dynamic-wide-content-images .markdown-source-view.mod-cm6 .dynamic-wide-content-image-inner,
+body.dynamic-wide-content.dynamic-wide-content-tasknotes .markdown-source-view.mod-cm6 .dynamic-wide-content-tasknotes-inner {
   max-width: 100%;
   overflow-x: auto;
+}
+
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-tables .markdown-source-view.mod-cm6 .dynamic-wide-content-table-block .cm-table-widget,
+body.dynamic-wide-content.dynamic-wide-content-live-preview.dynamic-wide-content-tables .markdown-source-view.mod-cm6 .dynamic-wide-content-table-block .table-wrapper,
+body.dynamic-wide-content.dynamic-wide-content-live-preview .markdown-source-view.mod-cm6 .dynamic-wide-content-wide-block > .markdown-rendered,
+body.dynamic-wide-content.dynamic-wide-content-live-preview .markdown-source-view.mod-cm6 .dynamic-wide-content-wide-block .image-embed,
+body.dynamic-wide-content.dynamic-wide-content-live-preview .markdown-source-view.mod-cm6 .dynamic-wide-content-wide-block .media-embed {
+  width: max-content;
+  min-width: 100%;
+  max-width: none;
+}
+
+body.dynamic-wide-content.dynamic-wide-content-tasknotes .is-readable-line-width .dynamic-wide-content-tasknotes-block.tasknotes-relationships-widget,
+body.dynamic-wide-content.dynamic-wide-content-tasknotes .is-readable-line-width .dynamic-wide-content-tasknotes-block.task-card-note-widget {
+  width: max-content;
+  min-width: 100%;
+  max-width: var(--dynamic-wide-content-max);
+  margin-inline: 0;
 }
 
 body.dynamic-wide-content.dynamic-wide-content-tables .markdown-rendered table.dynamic-wide-content-table,
@@ -59,9 +86,17 @@ body.dynamic-wide-content.dynamic-wide-content-code .markdown-source-view.mod-cm
   white-space: pre;
 }
 
-body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .dynamic-wide-content-media,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block img.dynamic-wide-content-media,
+body.dynamic-wide-content.dynamic-wide-content-images .dynamic-wide-content-image-block img.dynamic-wide-content-media,
 body.dynamic-wide-content.dynamic-wide-content-images .dynamic-wide-content-image-block .dynamic-wide-content-media {
   width: auto;
   max-width: none;
+  height: auto;
+}
+
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block svg.dynamic-wide-content-media,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block svg {
+  display: block;
+  max-width: 100%;
   height: auto;
 }
