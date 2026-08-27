@@ -57,6 +57,17 @@ assert(
   "styles.css must allow Live Preview .cm-table-widget to expand to max-content"
 );
 
+// Container queries for exact pane bounding (prevent left clipping)
+assert(
+  cssContent.includes("100cqw"),
+  "styles.css must bound wide blocks using 100cqw container queries to prevent left clipping"
+);
+
+assert(
+  cssContent.includes("container-type: inline-size"),
+  "styles.css must declare container-type: inline-size on note view containers"
+);
+
 console.log("  ✔ styles.css validations passed.");
 
 // 2. Verify main.js bundle content

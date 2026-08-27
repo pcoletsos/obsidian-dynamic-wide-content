@@ -1,8 +1,17 @@
 body.dynamic-wide-content {
   --dynamic-wide-content-max: min(
     var(--dynamic-wide-content-max-width, 1600px),
+    calc(100cqw - var(--dynamic-wide-content-viewport-margin, 64px)),
     calc(100vw - var(--dynamic-wide-content-viewport-margin, 64px))
   );
+}
+
+body.dynamic-wide-content .workspace-leaf,
+body.dynamic-wide-content .workspace-leaf-content,
+body.dynamic-wide-content .view-content,
+body.dynamic-wide-content .markdown-rendered,
+body.dynamic-wide-content .markdown-source-view {
+  container-type: inline-size;
 }
 
 body.dynamic-wide-content .dynamic-wide-content-overflow-visible,
