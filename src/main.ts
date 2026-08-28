@@ -352,6 +352,9 @@ function markWideContent(root: HTMLElement) {
 function clearWideContentMarkers(root: HTMLElement) {
   forEachMatch(root, MARKER_SELECTOR, (element) => {
     element.classList.remove(...MARKER_CLASSES);
+    if (element.tagName.toLowerCase() === "svg") {
+      element.style.removeProperty("width");
+    }
   });
 }
 
@@ -446,6 +449,40 @@ function markMediaChildren(element: HTMLElement) {
 
 function markMedia(element: HTMLElement) {
   element.classList.add(MEDIA_CLASS);
+
+  if (element.tagName.toLowerCase() === "svg") {
+    const svg = element as unknown as SVGSVGElement;
+    let naturalWidth = 0;
+
+    if (svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width > 0) {
+      naturalWidth = svg.viewBox.baseVal.width;
+    } else {
+      const viewBoxAttr = svg.getAttribute("viewBox");
+      if (viewBoxAttr) {
+        const parts = viewBoxAttr.trim().split(/[\s,]+/);
+        if (parts.length === 4) {
+          const w = parseFloat(parts[2]);
+          if (!isNaN(w) && w > 0) {
+            naturalWidth = w;
+          }
+        }
+      }
+    }
+
+    if (naturalWidth === 0) {
+      const widthAttr = svg.getAttribute("width");
+      if (widthAttr && !widthAttr.includes("%")) {
+        const w = parseFloat(widthAttr);
+        if (!isNaN(w) && w > 0) {
+          naturalWidth = w;
+        }
+      }
+    }
+
+    if (naturalWidth > 0) {
+      svg.style.width = `${Math.ceil(naturalWidth)}px`;
+    }
+  }
 }
 
 function markOverflowAncestors(element: HTMLElement) {
