@@ -105,7 +105,15 @@ const DIAGRAM_CONTAINER_CLASSES = [
   "el-lang-plantuml-svg",
   "el-lang-puml",
   "el-lang-puml-png",
-  "el-lang-puml-svg"
+  "el-lang-puml-svg",
+  "block-language-mermaid",
+  "block-language-plantuml",
+  "block-language-plantuml-png",
+  "block-language-plantuml-svg",
+  "block-language-puml",
+  "block-language-puml-png",
+  "block-language-puml-svg",
+  "plantuml-preview-view"
 ];
 
 const DIAGRAM_CONTENT_CLASSES = [
@@ -117,12 +125,21 @@ const DIAGRAM_CONTENT_CLASSES = [
   "block-language-puml",
   "block-language-puml-png",
   "block-language-puml-svg",
-  "plantuml-preview-view"
+  "plantuml-preview-view",
+  "plantuml-image",
+  "plantuml-svg"
 ];
 
 const MARKER_SELECTOR = MARKER_CLASSES.map((className) => `.${className}`).join(", ");
 const DIAGRAM_CONTAINER_SELECTOR = DIAGRAM_CONTAINER_CLASSES.map((className) => `.${className}`).join(", ");
-const DIAGRAM_CONTENT_SELECTOR = DIAGRAM_CONTENT_CLASSES.map((className) => `.${className}`).join(", ");
+const DIAGRAM_CONTENT_SELECTOR = [
+  ...DIAGRAM_CONTENT_CLASSES.map((className) => `.${className}`),
+  "[data-type='plantuml']",
+  "[data-type='puml']",
+  "[data-type='mermaid']",
+  "div[class*='plantuml']",
+  "div[class*='puml']"
+].join(", ");
 const IMAGE_CONTAINER_SELECTOR = ".el-embed-image, .internal-embed.image-embed, .image-embed";
 const TASKNOTES_SELECTOR = [
   ".tasknotes-relationships-widget",
@@ -449,6 +466,13 @@ function markMediaChildren(element: HTMLElement) {
 
 function markMedia(element: HTMLElement) {
   element.classList.add(MEDIA_CLASS);
+
+  if (element.tagName.toLowerCase() === "img") {
+    const img = element as HTMLImageElement;
+    if (img.style.maxWidth === "100%") {
+      img.style.removeProperty("max-width");
+    }
+  }
 
   if (element.tagName.toLowerCase() === "svg") {
     const svg = element as unknown as SVGSVGElement;

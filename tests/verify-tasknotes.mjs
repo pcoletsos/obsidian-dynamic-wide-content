@@ -435,4 +435,30 @@ assert(
 );
 console.log("    ✔ TaskNotes scenario verified successfully.");
 
+// Test Case 4: PlantUML diagram in Reading View and Live Preview
+console.log("  → Scenario 4: PlantUML diagram marking");
+const pumlEmbed = new MockElement("div", "cm-embed-block");
+const pumlBlock = new MockElement("div", "block-language-plantuml");
+const pumlImg = new MockElement("img", "plantuml-image");
+
+lpContent.appendChild(pumlEmbed);
+pumlEmbed.appendChild(pumlBlock);
+pumlBlock.appendChild(pumlImg);
+
+markDiagrams(livePreviewView);
+
+assert(
+  pumlEmbed.classList.contains(WIDE_BLOCK_CLASS),
+  "PlantUML embed block must receive dynamic-wide-content-wide-block"
+);
+assert(
+  pumlEmbed.classList.contains(DIAGRAM_BLOCK_CLASS),
+  "PlantUML embed block must receive dynamic-wide-content-diagram-block"
+);
+assert(
+  pumlImg.classList.contains(MEDIA_CLASS),
+  "PlantUML image must receive dynamic-wide-content-media"
+);
+console.log("    ✔ PlantUML scenario verified successfully.");
+
 console.log("\n🎉 ALL TESTS PASSED SUCCESSFULLY! Production ready.");

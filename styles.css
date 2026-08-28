@@ -47,6 +47,17 @@ body.dynamic-wide-content.dynamic-wide-content-tasknotes .markdown-source-view.m
   overflow-x: auto;
 }
 
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .plantuml-preview-view,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .block-language-plantuml,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .block-language-plantuml-png,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .block-language-plantuml-svg,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .block-language-puml,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .block-language-puml-png,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .block-language-puml-svg {
+  width: max-content;
+  min-width: 100%;
+}
+
 body.dynamic-wide-content.dynamic-wide-content-tasknotes .is-readable-line-width .dynamic-wide-content-tasknotes-block.tasknotes-relationships-widget,
 body.dynamic-wide-content.dynamic-wide-content-tasknotes .is-readable-line-width .dynamic-wide-content-tasknotes-block.task-card-note-widget {
   width: max-content;
@@ -68,7 +79,11 @@ body.dynamic-wide-content.dynamic-wide-content-code .markdown-source-view.mod-cm
 }
 
 body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block img.dynamic-wide-content-media,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block img,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .block-language-plantuml img,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .plantuml-preview-view img,
 body.dynamic-wide-content.dynamic-wide-content-images .dynamic-wide-content-image-block img.dynamic-wide-content-media,
+body.dynamic-wide-content.dynamic-wide-content-images .dynamic-wide-content-image-block img,
 body.dynamic-wide-content.dynamic-wide-content-images .dynamic-wide-content-image-block .dynamic-wide-content-media {
   width: auto;
   max-width: none;
@@ -76,7 +91,9 @@ body.dynamic-wide-content.dynamic-wide-content-images .dynamic-wide-content-imag
 }
 
 body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block svg.dynamic-wide-content-media,
-body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block svg {
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block svg,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .block-language-plantuml svg,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .plantuml-preview-view svg {
   display: block;
   max-width: 100%;
   height: auto;
