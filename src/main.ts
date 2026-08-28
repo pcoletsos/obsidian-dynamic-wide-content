@@ -1,4 +1,11 @@
-import { App, MarkdownView, Plugin, PluginSettingTab, Setting } from "obsidian";
+import {
+  App,
+  MarkdownView,
+  Plugin,
+  PluginSettingTab,
+  Setting,
+  SettingDefinitionItem
+} from "obsidian";
 
 interface DynamicWideContentSettings {
   maxWidth: number;
@@ -195,10 +202,15 @@ export default class DynamicWideContentPlugin extends Plugin {
     this.settings = normalizeSettings(saved);
   }
 
-  async saveSettings() {
-    await this.saveData(this.settings);
+  override async saveData(data: unknown) {
+    await super.saveData(data);
+    this.settings = normalizeSettings(data);
     this.applySettings();
     this.refreshVisibleContent();
+  }
+
+  async saveSettings() {
+    await this.saveData(this.settings);
   }
 
   applySettings() {
@@ -266,6 +278,112 @@ class DynamicWideContentSettingTab extends PluginSettingTab {
   constructor(app: App, plugin: DynamicWideContentPlugin) {
     super(app, plugin);
     this.plugin = plugin;
+  }
+
+  getSettingDefinitions(): SettingDefinitionItem[] {
+    return [
+      {
+        type: "group",
+        heading: "Display",
+        items: [
+          {
+            name: "Maximum wide content width",
+            desc: "Controls how far wide blocks may expand while normal note text stays readable.",
+            control: {
+              type: "slider",
+              key: "maxWidth",
+              min: 900,
+              max: 2400,
+              step: 50
+            }
+          },
+          {
+            name: "Viewport side margin",
+            desc: "Keeps widened blocks away from the edge of the pane.",
+            control: {
+              type: "slider",
+              key: "viewportMargin",
+              min: 0,
+              max: 160,
+              step: 8
+            }
+          },
+          {
+            name: "Widen tables",
+            desc: "Allow Markdown tables to break out of the normal reading column.",
+            control: {
+              type: "toggle",
+              key: "widenTables"
+            }
+          },
+          {
+            name: "Widen diagrams",
+            desc: "Allow Mermaid and PlantUML diagrams to use a wider scrollable frame.",
+            control: {
+              type: "toggle",
+              key: "widenDiagrams"
+            }
+          },
+          {
+            name: "Widen images",
+            desc: "Allow embedded images to display wider than normal note text.",
+            control: {
+              type: "toggle",
+              key: "widenImages"
+            }
+          },
+          {
+            name: "Widen code blocks",
+            desc: "Allow preformatted code blocks to use a wider scrollable frame.",
+            control: {
+              type: "toggle",
+              key: "widenCodeBlocks"
+            }
+          },
+          {
+            name: "Widen TaskNotes widgets",
+            desc: "Allow TaskNotes relationship boards and widgets to break out of the normal reading column.",
+            control: {
+              type: "toggle",
+              key: "widenTaskNotes"
+            }
+          },
+          {
+            name: "Keep table cells on one line",
+            desc: "Prevents wide tables from wrapping every cell into tall unreadable rows.",
+            control: {
+              type: "toggle",
+              key: "noWrapTableCells"
+            }
+          },
+          {
+            name: "Reading view support",
+            desc: "Apply selective widening in Reading view.",
+            control: {
+              type: "toggle",
+              key: "readingView"
+            }
+          },
+          {
+            name: "Live Preview support",
+            desc: "Apply selective widening to rendered embeds in Live Preview.",
+            control: {
+              type: "toggle",
+              key: "livePreview"
+            }
+          }
+        ]
+      }
+    ];
+  }
+
+  override getControlValue(key: string): unknown {
+    return (this.plugin.settings as unknown as Record<string, unknown>)[key];
+  }
+
+  override async setControlValue(key: string, value: unknown): Promise<void> {
+    (this.plugin.settings as unknown as Record<string, unknown>)[key] = value;
+    await this.plugin.saveSettings();
   }
 
   display(): void {

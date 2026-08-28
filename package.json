@@ -1,6 +1,6 @@
 {
   "name": "obsidian-dynamic-wide-content",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "Wide tables, diagrams, images, and code blocks without widening normal note text.",
   "main": "main.js",
   "scripts": {

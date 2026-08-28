@@ -66,6 +66,11 @@ const mainJsContent = fs.readFileSync("main.js", "utf8");
 console.log("✔ Checking main.js bundle...");
 
 assert(
+  mainJsContent.includes("getSettingDefinitions"),
+  "main.js must contain getSettingDefinitions for Obsidian 1.13+ declarative settings search"
+);
+
+assert(
   mainJsContent.includes("widenTaskNotes"),
   "main.js must contain widenTaskNotes setting"
 );
