@@ -47,13 +47,16 @@ body.dynamic-wide-content.dynamic-wide-content-tasknotes .markdown-source-view.m
   overflow-x: auto;
 }
 
-body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .plantuml-preview-view,
-body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .block-language-plantuml,
-body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .block-language-plantuml-png,
-body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .block-language-plantuml-svg,
-body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .block-language-puml,
-body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .block-language-puml-png,
-body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block .block-language-puml-svg {
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-inner,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .plantuml-preview-view,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .block-language-plantuml,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .block-language-plantuml-png,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .block-language-plantuml-svg,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .block-language-puml,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .block-language-puml-png,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .block-language-puml-svg {
+  text-align: start;
   width: max-content;
   min-width: 100%;
 }
@@ -78,13 +81,16 @@ body.dynamic-wide-content.dynamic-wide-content-code .markdown-source-view.mod-cm
   white-space: pre;
 }
 
-body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block img.dynamic-wide-content-media,
 body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block img,
+body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-diagram-block img.dynamic-wide-content-media,
 body.dynamic-wide-content.dynamic-wide-content-diagrams .block-language-plantuml img,
 body.dynamic-wide-content.dynamic-wide-content-diagrams .plantuml-preview-view img,
 body.dynamic-wide-content.dynamic-wide-content-images .dynamic-wide-content-image-block img.dynamic-wide-content-media,
 body.dynamic-wide-content.dynamic-wide-content-images .dynamic-wide-content-image-block img,
 body.dynamic-wide-content.dynamic-wide-content-images .dynamic-wide-content-image-block .dynamic-wide-content-media {
+  display: block;
+  margin-left: 0;
+  margin-right: 0;
   width: auto;
   max-width: none;
   height: auto;
@@ -95,6 +101,8 @@ body.dynamic-wide-content.dynamic-wide-content-diagrams .dynamic-wide-content-di
 body.dynamic-wide-content.dynamic-wide-content-diagrams .block-language-plantuml svg,
 body.dynamic-wide-content.dynamic-wide-content-diagrams .plantuml-preview-view svg {
   display: block;
-  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  max-width: none;
   height: auto;
 }
