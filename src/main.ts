@@ -157,7 +157,7 @@ const TASKNOTES_SELECTOR = [
 
 export default class DynamicWideContentPlugin extends Plugin {
   settings: DynamicWideContentSettings = { ...DEFAULT_SETTINGS };
-  private observer: MutationObserver | null = null;
+  private observers = new Map<Document, MutationObserver>();
 
   async onload() {
     await this.loadSettings();
@@ -180,10 +180,19 @@ export default class DynamicWideContentPlugin extends Plugin {
       })
     );
 
-    this.startObserver();
+    // Observe every window, not just the one that happened to be active on load:
+    // binding to activeDocument left the main window unobserved when the plugin
+    // loaded while a popout had focus, and popouts were never observed at all.
+    this.observeDocument(document);
+    this.app.workspace.onLayoutReady(() => {
+      this.app.workspace.iterateAllLeaves((leaf) => this.observeDocument(leaf.getContainer().doc));
+    });
+    this.registerEvent(this.app.workspace.on("window-open", (win) => this.observeDocument(win.doc)));
+    this.registerEvent(this.app.workspace.on("window-close", (win) => this.unobserveDocument(win.doc)));
     this.register(() => {
-      this.stopObserver();
-      this.clearSettings();
+      for (const doc of Array.from(this.observers.keys())) {
+        this.unobserveDocument(doc);
+      }
     });
 
     this.addSettingTab(new DynamicWideContentSettingTab(this.app, this));
@@ -214,8 +223,12 @@ export default class DynamicWideContentPlugin extends Plugin {
   }
 
   applySettings() {
-    const { body } = activeDocument;
+    for (const doc of this.observers.keys()) {
+      this.applySettingsTo(doc.body);
+    }
+  }
 
+  private applySettingsTo(body: HTMLElement) {
     body.style.setProperty("--dynamic-wide-content-max-width", `${this.settings.maxWidth}px`);
     body.style.setProperty("--dynamic-wide-content-viewport-margin", `${this.settings.viewportMargin}px`);
 
@@ -230,8 +243,7 @@ export default class DynamicWideContentPlugin extends Plugin {
     body.classList.toggle("dynamic-wide-content-nowrap-tables", this.settings.noWrapTableCells);
   }
 
-  clearSettings() {
-    const { body } = activeDocument;
+  private clearSettingsFrom(body: HTMLElement) {
     body.classList.remove(...BODY_CLASSES);
     body.style.removeProperty("--dynamic-wide-content-max-width");
     body.style.removeProperty("--dynamic-wide-content-viewport-margin");
@@ -245,10 +257,16 @@ export default class DynamicWideContentPlugin extends Plugin {
       }
     }
 
-    markWideContent(activeDocument.body);
+    for (const doc of this.observers.keys()) {
+      markWideContent(doc.body);
+    }
   }
 
-  private startObserver() {
+  private observeDocument(doc: Document) {
+    if (this.observers.has(doc)) {
+      return;
+    }
+
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         for (const node of Array.from(mutation.addedNodes)) {
@@ -259,16 +277,19 @@ export default class DynamicWideContentPlugin extends Plugin {
       }
     });
 
-    observer.observe(activeDocument.body, {
+    observer.observe(doc.body, {
       childList: true,
       subtree: true
     });
-    this.observer = observer;
+    this.observers.set(doc, observer);
+    this.applySettingsTo(doc.body);
+    markWideContent(doc.body);
   }
 
-  private stopObserver() {
-    this.observer?.disconnect();
-    this.observer = null;
+  private unobserveDocument(doc: Document) {
+    this.observers.get(doc)?.disconnect();
+    this.observers.delete(doc);
+    this.clearSettingsFrom(doc.body);
   }
 }
 
