@@ -1,8 +1,17 @@
 body.dynamic-wide-content {
   --dynamic-wide-content-max: min(
     var(--dynamic-wide-content-max-width, 1600px),
-    calc(100cqw - var(--dynamic-wide-content-viewport-margin, 64px))
+    calc(100vw - var(--dynamic-wide-content-viewport-margin, 64px))
   );
+}
+
+@supports (width: 1cqw) {
+  body.dynamic-wide-content {
+    --dynamic-wide-content-max: min(
+      var(--dynamic-wide-content-max-width, 1600px),
+      calc(100cqw - var(--dynamic-wide-content-viewport-margin, 64px))
+    );
+  }
 }
 
 body.dynamic-wide-content .workspace-leaf-content[data-type="markdown"] > .view-content {

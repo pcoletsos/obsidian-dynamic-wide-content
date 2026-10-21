@@ -57,9 +57,13 @@ assert(
 
 // Pane bounding rules (Issue #6 fix)
 assert(
-  cssContent.includes("calc(100cqw - var(--dynamic-wide-content-viewport-margin, 64px))") &&
-  !cssContent.includes("100vw"),
-  "styles.css must bound wide blocks by the pane width (100cqw), not the window width (100vw), so open sidebars do not overlap them"
+  /@supports \(width: 1cqw\) \{\s*body\.dynamic-wide-content \{\s*--dynamic-wide-content-max: min\([^}]*calc\(100cqw - var\(--dynamic-wide-content-viewport-margin, 64px\)\)/.test(cssContent),
+  "styles.css must bound wide blocks by the pane width (100cqw) where supported, so open sidebars do not overlap them"
+);
+
+assert(
+  cssContent.includes("calc(100vw - var(--dynamic-wide-content-viewport-margin, 64px))"),
+  "styles.css must keep a 100vw cap for engines without container query units (iOS 15), where 100cqw would drop the cap entirely"
 );
 
 const containerSelectors = [...cssContent.matchAll(/([^{}]+)\{[^{}]*container-type[^{}]*\}/g)].map((match) => match[1].trim());
