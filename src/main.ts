@@ -157,7 +157,7 @@ const TASKNOTES_SELECTOR = [
 
 export default class DynamicWideContentPlugin extends Plugin {
   settings: DynamicWideContentSettings = { ...DEFAULT_SETTINGS };
-  private observer: MutationObserver | null = null;
+  private observers = new Map<Document, MutationObserver>();
 
   async onload() {
     await this.loadSettings();
@@ -179,11 +179,34 @@ export default class DynamicWideContentPlugin extends Plugin {
         this.refreshVisibleContent();
       })
     );
+    this.registerEvent(
+      this.app.workspace.on("file-open", () => {
+        this.applySettings();
+        this.refreshVisibleContent();
+      })
+    );
 
-    this.startObserver();
+    this.observeDocument(document);
+    this.app.workspace.onLayoutReady(() => {
+      this.observeAllWindows();
+      this.applySettings();
+      this.refreshVisibleContent();
+    });
+    this.registerEvent(
+      this.app.workspace.on("window-open", (_win, window) => {
+        this.observeDocument(window.document);
+        this.applySettings();
+      })
+    );
+    this.registerEvent(
+      this.app.workspace.on("window-close", (_win, window) => {
+        this.clearDocument(window.document);
+        this.stopObserving(window.document);
+      })
+    );
     this.register(() => {
-      this.stopObserver();
       this.clearSettings();
+      this.stopAllObservers();
     });
 
     this.addSettingTab(new DynamicWideContentSettingTab(this.app, this));
@@ -203,10 +226,10 @@ export default class DynamicWideContentPlugin extends Plugin {
   }
 
   override async saveData(data: unknown) {
-    await super.saveData(data);
     this.settings = normalizeSettings(data);
     this.applySettings();
     this.refreshVisibleContent();
+    await super.saveData(data);
   }
 
   async saveSettings() {
@@ -214,7 +237,13 @@ export default class DynamicWideContentPlugin extends Plugin {
   }
 
   applySettings() {
-    const { body } = activeDocument;
+    for (const doc of this.documents()) {
+      this.applySettingsToDocument(doc);
+    }
+  }
+
+  private applySettingsToDocument(doc: Document) {
+    const { body } = doc;
 
     body.style.setProperty("--dynamic-wide-content-max-width", `${this.settings.maxWidth}px`);
     body.style.setProperty("--dynamic-wide-content-viewport-margin", `${this.settings.viewportMargin}px`);
@@ -231,7 +260,13 @@ export default class DynamicWideContentPlugin extends Plugin {
   }
 
   clearSettings() {
-    const { body } = activeDocument;
+    for (const doc of this.documents()) {
+      this.clearDocument(doc);
+    }
+  }
+
+  private clearDocument(doc: Document) {
+    const { body } = doc;
     body.classList.remove(...BODY_CLASSES);
     body.style.removeProperty("--dynamic-wide-content-max-width");
     body.style.removeProperty("--dynamic-wide-content-viewport-margin");
@@ -245,30 +280,53 @@ export default class DynamicWideContentPlugin extends Plugin {
       }
     }
 
-    markWideContent(activeDocument.body);
+    for (const doc of this.documents()) {
+      markWideContent(doc.body);
+    }
   }
 
-  private startObserver() {
+  private documents(): Document[] {
+    const docs = new Set<Document>([document, ...this.observers.keys()]);
+    return Array.from(docs);
+  }
+
+  private observeAllWindows() {
+    this.app.workspace.iterateAllLeaves((leaf) => {
+      this.observeDocument(leaf.view.containerEl.ownerDocument);
+    });
+  }
+
+  private observeDocument(doc: Document) {
+    if (this.observers.has(doc)) return;
+
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         for (const node of Array.from(mutation.addedNodes)) {
-          if (isHTMLElement(node)) {
-            markWideContent(node);
-          }
+          if (!isHTMLElement(node)) continue;
+
+          const block = closestByClass(node, [WIDE_BLOCK_CLASS]);
+          markWideContent(block ?? node);
         }
       }
     });
 
-    observer.observe(activeDocument.body, {
+    observer.observe(doc.body, {
       childList: true,
       subtree: true
     });
-    this.observer = observer;
+    this.observers.set(doc, observer);
   }
 
-  private stopObserver() {
-    this.observer?.disconnect();
-    this.observer = null;
+  private stopObserving(doc: Document) {
+    this.observers.get(doc)?.disconnect();
+    this.observers.delete(doc);
+  }
+
+  private stopAllObservers() {
+    for (const observer of this.observers.values()) {
+      observer.disconnect();
+    }
+    this.observers.clear();
   }
 }
 
