@@ -55,6 +55,20 @@ assert(
   "styles.css must center wide blocks with transform, min-width 100%, and CSS variable max-width"
 );
 
+// Pane bounding rules (Issue #6 fix)
+assert(
+  cssContent.includes("calc(100cqw - var(--dynamic-wide-content-viewport-margin, 64px))") &&
+  !cssContent.includes("100vw"),
+  "styles.css must bound wide blocks by the pane width (100cqw), not the window width (100vw), so open sidebars do not overlap them"
+);
+
+const containerSelectors = [...cssContent.matchAll(/([^{}]+)\{[^{}]*container-type[^{}]*\}/g)].map((match) => match[1].trim());
+assert.deepEqual(
+  containerSelectors,
+  ['body.dynamic-wide-content .workspace-leaf-content[data-type="markdown"] > .view-content'],
+  "styles.css must only make the markdown pane a size container; containers on note content collapse max-content wide blocks"
+);
+
 // Table layout rules
 assert(
   cssContent.includes("table.dynamic-wide-content-table") &&
